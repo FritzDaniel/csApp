@@ -172,20 +172,16 @@
 
 @section('script')
     <script>
-        // Contoh URL API untuk setiap permintaan
-        const API_BASE_URL = "http://localhost:8000/api"; // Ganti dengan URL API Anda
+        const API_BASE_URL = "http://localhost:8000/api";
 
-        // Fungsi untuk memuat kota berdasarkan provinsi yang dipilih
         function getKota() {
             const provinsiId = document.getElementById("provinsi").value;
             const kotaDropdown = document.getElementById("kota");
 
-            // Kosongkan dropdown kota, kecamatan, dan kelurahan
             kotaDropdown.innerHTML = '<option value="">Pilih Kota</option>';
             document.getElementById("kecamatan").innerHTML = '<option value="">Pilih Kecamatan</option>';
             document.getElementById("kelurahan").innerHTML = '<option value="">Pilih Kelurahan</option>';
 
-            // Jika provinsi dipilih, ambil data kota
             if (provinsiId) {
                 fetch(`${API_BASE_URL}/kota/get/${provinsiId}`)
                     .then(response => response.json())
