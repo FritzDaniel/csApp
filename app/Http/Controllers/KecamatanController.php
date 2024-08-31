@@ -64,4 +64,10 @@ class KecamatanController extends BaseController
     {
         //
     }
+
+    public function getKecamatanByKota($id)
+    {
+        $data = Kecamatan::where('kota_id','=',$id)->get();
+        return $this->sendResponse($data,'Success', 200);
+    }
 }

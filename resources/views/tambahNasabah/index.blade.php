@@ -82,7 +82,7 @@
                             <label>Alamat Lengkap</label>
                             <br> <br>
                             <label>Provinsi</label>
-                            <select name="provinsi" id="" class="form-control">
+                            <select name="provinsi" id="provinsi" class="form-control" onchange="getKota()" required>
                                 <option value="">Pilih Provinsi</option>
                                 @if(!$provinsi->isEmpty())
                                     @foreach ($provinsi as $item)
@@ -94,7 +94,7 @@
                         <br>
                         <div class="form-group">
                             <label>Kota</label>
-                            <select name="kota" id="" class="form-control">
+                            <select name="kota" id="kota" class="form-control" onchange="getKecamatan()" disabled required>
                                 <option value="">Pilih Kota</option>
                                 @if(!$kota->isEmpty())
                                     @foreach ($kota as $item)
@@ -106,25 +106,15 @@
                         <br>
                         <div class="form-group">
                             <label>Kecamatan</label>
-                            <select name="kecamatan" id="" class="form-control">
+                            <select name="kecamatan" id="kecamatan" onchange="getKelurahan()" class="form-control" disabled required>
                                 <option value="">Pilih Kecamatan</option>
-                                @if(!$kecamatan->isEmpty())
-                                    @foreach ($kecamatan as $item)
-                                        <option value="{{ $item->id }}">{{ $item->kecamatan }}</option>
-                                    @endforeach
-                                @endif
                             </select>
                         </div>
                         <br>
                         <div class="form-group">
                             <label>Kelurahan</label>
-                            <select name="kelurahan" id="" class="form-control">
+                            <select name="kelurahan" id="kelurahan" class="form-control" disabled required>
                                 <option value="">Pilih Kelurahan</option>
-                                @if(!$kelurahan->isEmpty())
-                                    @foreach ($kelurahan as $item)
-                                        <option value="{{ $item->id }}">{{ $item->kelurahan }}</option>
-                                    @endforeach
-                                @endif
                             </select>
                         </div>
                         <br>
@@ -177,4 +167,96 @@
         </div>
     </div>
 </div>
+@endsection
+
+
+@section('script')
+    <script>
+        // Contoh URL API untuk setiap permintaan
+        const API_BASE_URL = "http://localhost:8000/api"; // Ganti dengan URL API Anda
+
+        // Fungsi untuk memuat kota berdasarkan provinsi yang dipilih
+        function getKota() {
+            const provinsiId = document.getElementById("provinsi").value;
+            const kotaDropdown = document.getElementById("kota");
+
+            // Kosongkan dropdown kota, kecamatan, dan kelurahan
+            kotaDropdown.innerHTML = '<option value="">Pilih Kota</option>';
+            document.getElementById("kecamatan").innerHTML = '<option value="">Pilih Kecamatan</option>';
+            document.getElementById("kelurahan").innerHTML = '<option value="">Pilih Kelurahan</option>';
+
+            // Jika provinsi dipilih, ambil data kota
+            if (provinsiId) {
+                fetch(`${API_BASE_URL}/kota/get/${provinsiId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        JSON.stringify(data);
+                        kotaDropdown.disabled = false;
+                        data.data.forEach(kota => {
+                            let option = document.createElement("option");
+                            option.value = kota.id;
+                            option.text = kota.kota;
+                            kotaDropdown.add(option);
+                        });
+                    })
+                    .catch(error => console.error("Error:", error));
+            } else {
+                kotaDropdown.disabled = true;
+                document.getElementById("kecamatan").disabled = true;
+                document.getElementById("kelurahan").disabled = true;
+            }
+        }
+
+        function getKecamatan() {
+            const kotaId = document.getElementById("kota").value;
+            const kecamatanDropdown = document.getElementById("kecamatan");
+
+            kecamatanDropdown.innerHTML = '<option value="">Pilih Kecamatan</option>';
+            document.getElementById("kelurahan").innerHTML = '<option value="">Pilih Kelurahan</option>';
+
+            if (kotaId) {
+                fetch(`${API_BASE_URL}/kecamatan/get/${kotaId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        JSON.stringify(data);
+                        kecamatanDropdown.disabled = false;
+                        data.data.forEach(kecamatan => {
+                            let option = document.createElement("option");
+                            option.value = kecamatan.id;
+                            option.text = kecamatan.kecamatan;
+                            kecamatanDropdown.add(option);
+                        });
+                    })
+                    .catch(error => console.error('Error:', error));
+            } else {
+                kecamatanDropdown.disabled = true;
+                document.getElementById("kelurahan").disabled = true;
+            }
+        }
+
+        function getKelurahan() {
+            const kecamatanId = document.getElementById("kecamatan").value;
+            const kelurahanDropdown = document.getElementById("kelurahan");
+
+            kelurahanDropdown.innerHTML = '<option value="">Pilih Kelurahan</option>';
+
+            if (kecamatanId) {
+                fetch(`${API_BASE_URL}/kelurahan/get/${kecamatanId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        JSON.stringify(data);
+                        kelurahanDropdown.disabled = false;
+                        data.data.forEach(kelurahan => {
+                            let option = document.createElement("option");
+                            option.value = kelurahan.id;
+                            option.text = kelurahan.kelurahan;
+                            kelurahanDropdown.add(option);
+                        });
+                    })
+                    .catch(error => console.error('Error:', error));
+            } else {
+                kelurahanDropdown.disabled = true;
+            }
+        }
+    </script>
 @endsection

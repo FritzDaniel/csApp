@@ -17,3 +17,7 @@ Route::apiResource('provinsi', ProvinsiController::class);
 Route::apiResource('kota', KotaController::class);
 Route::apiResource('kecamatan', KecamatanController::class);
 Route::apiResource('kelurahan', KelurahanController::class);
+
+Route::get('kota/get/{id}', [KotaController::class, 'getKotaByProvince']);
+Route::get('kecamatan/get/{id}', [KecamatanController::class, 'getKecamatanByKota']);
+Route::get('kelurahan/get/{id}', [KelurahanController::class, 'getKelurahanByKecamantan']);

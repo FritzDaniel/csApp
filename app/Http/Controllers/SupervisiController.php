@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\DataNasabah;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ApproveMail;
+use App\Models\User;
 
 class SupervisiController extends Controller
 {
@@ -46,4 +47,20 @@ class SupervisiController extends Controller
 
         return redirect()->route('nasabahAll')->with('message', 'success');
     }
+
+    public function dataCs() {
+        $data = User::where('role','=','cs')->get();
+        return view('dataUser.index',compact('data'));
+    }
+
+    public function unblockCs($id)
+{
+        $user = User::find($id);
+        if ($user) {
+            $user->is_blocked = 0;
+            $user->save();
+        }
+
+    return back()->with('success', 'User has been unblocked.');
+}
 }

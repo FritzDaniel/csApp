@@ -64,4 +64,10 @@ class KotaController extends BaseController
     {
         //
     }
+
+    public function getKotaByProvince($id)
+    {
+        $data = Kota::where('provinsi_id','=',$id)->get();
+        return $this->sendResponse($data,'Success', 200);
+    }
 }

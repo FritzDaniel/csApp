@@ -42,6 +42,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('nasabahAll') }}">{{ __('Data Nasabah') }}</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('dataCs') }}">{{ __('Data Cs') }}</a>
+                                </li>
                             @endif
                         @endif
                     </ul>
@@ -53,6 +56,9 @@
                             @if (Route::has('login'))
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
                         @else
@@ -83,5 +89,7 @@
             @yield('content')
         </main>
     </div>
+
+    @yield('script')
 </body>
 </html>

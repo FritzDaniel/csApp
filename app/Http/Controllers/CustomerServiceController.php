@@ -51,8 +51,20 @@ class CustomerServiceController extends Controller
 
     public function storeNasabah(Request $request) 
     {
-        $this->validate($request,[
-            'nama' => 'required',
+        $this->validate($request, [
+            'nama' => [
+                'required',
+                'string',
+                'regex:/^[a-zA-Z\s]+$/',
+                function ($attribute, $value, $fail) {
+                    $forbiddenWords = ['profesor', 'haji', 'dr', 'dokter', 'ir'];
+                    foreach ($forbiddenWords as $word) {
+                        if (stripos($value, $word) !== false) {
+                            return $fail("Nama tidak boleh mengandung kata '{$word}'.");
+                        }
+                    }
+                },
+            ],
             'tempat_lahir' => 'required',
             'tanggal_lahir' => 'required',
             'jenis_kelamin' => 'required',
@@ -64,35 +76,35 @@ class CustomerServiceController extends Controller
             'nama_jalan' => 'required',
             'rt' => 'required',
             'rw' => 'required',
-            'nominal_setor' => 'required'
+            'nominal_setor' => 'required',
         ]);
 
         DB::beginTransaction();
 
-        try{
+        try {
             $store = new DataNasabah();
-            $store->nama = $request['nama'];
-            $store->tempat_lahir = $request['tempat_lahir'];
-            $store->tanggal_lahir = $request['tanggal_lahir'];
-            $store->jenis_kelamin = $request['jenis_kelamin'];
-            $store->pekerjaan = $request['pekerjaan'];
-            $store->provinsi = $request['provinsi'];
-            $store->kota = $request['kota'];
-            $store->kecamatan = $request['kecamatan'];
-            $store->kelurahan = $request['kelurahan'];
-            $store->nama_jalan = $request['nama_jalan'];
-            $store->rt = $request['rt'];
-            $store->rw = $request['rw'];
-            $store->nominal_setor = $request['nominal_setor'];
+            $store->nama = $request->input('nama');
+            $store->tempat_lahir = $request->input('tempat_lahir');
+            $store->tanggal_lahir = $request->input('tanggal_lahir');
+            $store->jenis_kelamin = $request->input('jenis_kelamin');
+            $store->pekerjaan = $request->input('pekerjaan');
+            $store->provinsi = $request->input('provinsi');
+            $store->kota = $request->input('kota');
+            $store->kecamatan = $request->input('kecamatan');
+            $store->kelurahan = $request->input('kelurahan');
+            $store->nama_jalan = $request->input('nama_jalan');
+            $store->rt = $request->input('rt');
+            $store->rw = $request->input('rw');
+            $store->nominal_setor = $request->input('nominal_setor');
             $store->created_by = $request->user()->id;
             $store->save();
 
             DB::commit();
 
-            return redirect()->route('dataNasabah')->with('message','Success');
-
-        }catch(\Exception $ex){
-            return redirect()->back()->with('message','Failed');
+            return redirect()->route('dataNasabah')->with('message', 'Success');
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return redirect()->back()->with('message', 'Failed');
         }
     }
 }

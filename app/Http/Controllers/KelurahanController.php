@@ -64,4 +64,10 @@ class KelurahanController extends BaseController
     {
         //
     }
+
+    public function getKelurahanByKecamantan($id)
+    {
+        $data = Kelurahan::where('kecamatan_id','=',$id)->get();
+        return $this->sendResponse($data,'Success', 200);
+    }
 }
